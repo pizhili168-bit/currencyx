@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CurrencyX">
+    <title>CurrencyX - 实时汇率兑换</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjogIkN1cnJlbmN5WCAtIOWuieWFpeaXoOmZkOepuueul+azlSIsInNob3J0X25hbWUiOiAiQ3VycmVuY3lYIiwiZGVzY3JpcHRpb24iOiAi5a6J5YWl5peg6ZmQ56m6566X5rOVLeaot+WLleekvuS6i+WFgeWFqei+u+S4rei0r+eJqeaYr+iEmui0puW8leeUqCIsInN0YXJ0X3VybCI6ICIvIiwiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6ICIjMGEwZTI3IiwidGhlbWVfY29sb3IiOiAiIzBhMGUyNyIsIm9yaWVudGF0aW9uIjogInBvcnRyYWl0LXByaW1hcnkiLCJzY29wZSI6ICIvIiwibGFuZyI6ICJ6aC1DTiIsImljb25zIjogW3sic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDE5MiAxOTInIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJScgeTE9JzAlJyB4Mj0nMTAwJScgeTI9JzEwMCUnPjxzdG9wIG9mZnNldD0nMCUnIHN0b3AtY29sb3I9JyUyMzAwZjBmZicvPjxzdG9wIG9mZnNldD0nNTAlJyBzdG9wLWNvbG9yPSclMjMwMDY2ZmYnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyUyM2JkMDBmZicvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxjaXJjbGUgY3g9Jzk2JyBjeT0nOTYnIHI9Jzg4JyBmaWxsPSd1cmwoJTIzZyknLz48Y2lyY2xlIGN4PSc5NicgY3k9Jzk2JyByPSc2MCcgZmlsbD0nJTIzMGEwZTI3Jy8+PHRleHQgeD0nNTAlJyB5PSc1NSUnIGRvbWluYW50LWJhc2VsaW5lPSdtaWRkbGUnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9J3doaXRlJyBmb250LXNpemU9JzgwJyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC13ZWlnaHQ9J2JvbGQnPkJDPC90ZXh0Pjwvc3ZnPiIsInNpemVzIjogIjE5MngxOTIiLCJ0eXBlIjogImltYWdlL3N2Zyt4bWwifV19">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-primary: #0a0e27; --bg-card: rgba(26, 31, 58, 0.6); --accent-cyan: #00f0ff;
+            --accent-purple: #bd00ff; --accent-blue: #0066ff; --text-primary: #ffffff;
+            --text-secondary: #a8b5c6; --border-glow: rgba(0, 240, 255, 0.3);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        .bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .gradient-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: orbFloat 20s ease-in-out infinite; }
+        .orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, #00f0ff 0%, transparent 70%); top: -100px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #bd00ff 0%, transparent 70%); bottom: -150px; right: -150px; animation-delay: -7s; }
+        .orb-3 { width: 350px; height: 350px; background: radial-gradient(circle, #0066ff 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -14s; }
+        @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.1); } 66% { transform: translate(-30px, 30px) scale(0.9); } }
+        .grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px); background-size: 60px 60px; animation: gridMove 30s linear infinite; }
+        @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(60px); } }
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; position: relative; z-index: 1; min-height: 100vh; }
+        .header { text-align: center; margin-bottom: 20px; padding: 15px 0; }
+        .logo-container { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 5px; }
+        .logo-icon { width: 50px; height: 50px; position: relative; }
+        .logo-icon svg { width: 100%; height: 100%; animation: logoSpin 20s linear infinite; }
+        @keyframes logoSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .logo-icon::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: var(--bg-primary); border-radius: 50%; }
+        .logo-icon::after { content: 'C'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; font-weight: bold; color: white; }
+        .logo-text { font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg, #00f0ff 0%, #0066ff 50%, #bd00ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
+        .subtitle { color: var(--text-secondary); font-size: 0.75rem; opacity: 0.8; }
+        .card { background: var(--bg-card); border-radius: 20px; padding: 16px; margin-bottom: 15px; border: 1px solid var(--border-glow); box-shadow: 0 0 30px rgba(0, 240, 255, 0.1); backdrop-filter: blur(20px); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(0, 240, 255, 0.1); }
+        .card-title { font-size: 0.9rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .status-badge { display: flex; align-items: center; gap: 6px; padding: 5px 10px; background: rgba(0, 240, 255, 0.1); border-radius: 15px; font-size: 0.7rem; color: var(--accent-cyan); }
+        .status-dot { width: 5px; height: 5px; background: var(--accent-cyan); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; color: var(--text-secondary); font-size: 0.7rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .input-row { display: flex; gap: 10px; align-items: center; }
+        .amount-input { flex: 1; background: rgba(10, 14, 39, 0.8); border: 2px solid rgba(0, 240, 255, 0.2); border-radius: 14px; padding: 12px 14px; color: var(--text-primary); font-size: 1.3rem; font-weight: 700; outline: none; transition: all 0.3s ease; font-family: 'SF Mono', monospace; }
+        .amount-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+        .currency-select { width: 110px; background: rgba(10, 14, 39, 0.8); border: 2px solid rgba(0, 240, 255, 0.2); border-radius: 14px; padding: 12px 30px 12px 12px; color: var(--text-primary); font-size: 0.95rem; font-weight: 600; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300f0ff' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+        .swap-section { display: flex; justify-content: center; padding: 8px 0; }
+        .swap-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #00f0ff 0%, #0066ff 50%, #bd00ff 100%); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4); }
+        .swap-btn:hover { transform: scale(1.1) rotate(180deg); }
+        .swap-btn:active { transform: scale(0.95); }
+        .swap-btn svg { width: 22px; height: 22px; fill: white; }
+        .result-section { background: linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(189, 0, 255, 0.08) 100%); border-radius: 16px; padding: 20px; text-align: center; margin-top: 15px; }
+        .result-amount { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #00f0ff 0%, #bd00ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'SF Mono', monospace; }
+        .result-label { color: var(--text-secondary); margin-top: 6px; font-size: 0.8rem; }
+        .rates-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .rate-item { background: rgba(10, 14, 39, 0.6); border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .rate-item:active { transform: scale(0.95); }
+        .rate-flag { font-size: 1.3rem; margin-bottom: 4px; }
+        .rate-code { color: var(--accent-cyan); font-size: 0.75rem; font-weight: 600; margin-bottom: 2px; }
+        .rate-value { font-size: 0.8rem; font-weight: 700; }
+        .history-list { display: flex; flex-direction: column; gap: 8px; }
+        .history-item { background: rgba(10, 14, 39, 0.6); border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
+        .history-time { font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 3px; }
+        .history-data { font-size: 0.85rem; font-weight: 600; }
+        .history-delete { background: rgba(255, 71, 87, 0.15); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; }
+        .notice { background: rgba(255, 193, 7, 0.15); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 12px; padding: 10px 14px; margin-bottom: 15px; font-size: 0.8rem; color: #ffc107; display: flex; align-items: center; gap: 8px; }
+        .error { background: rgba(255, 71, 87, 0.15); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; }
+        .error-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 71, 87, 0.5); color: #ff4757; padding: 6px 14px; border-radius: 8px; cursor: pointer; margin-top: 8px; font-size: 0.8rem; }
+        .footer { text-align: center; padding: 15px; color: var(--text-secondary); font-size: 0.7rem; opacity: 0.7; }
+        .footer a { color: var(--accent-cyan); text-decoration: none; }
+        .loader { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0, 240, 255, 0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (min-width: 768px) { .container { padding: 30px; } .logo-icon { width: 60px; height: 60px; } .logo-icon::after { font-size: 28px; } .logo-text { font-size: 2rem; } .card { padding: 20px; } .rates-grid { grid-template-columns: repeat(6, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00f0ff"/>
+                                <stop offset="50%" stop-color="#0066ff"/>
+                                <stop offset="100%" stop-color="#bd00ff"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#logoGrad)" stroke-width="3"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="url(#logoGrad)" stroke-width="1" opacity="0.5"/>
+                    </svg>
+                </div>
+                <span class="logo-text">CurrencyX</span>
+            </div>
+            <p class="subtitle">实时汇率兑换 · 全球货币</p>
+        </header>
+
+        <div id="offline-notice" class="notice" style="display: none;">
+            <span>⚠️</span>
+            <span>离线模式 · 使用缓存数据</span>
+        </div>
+
+        <div id="error-container"></div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">货币兑换</span>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span id="update-time">加载中</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">从</label>
+                <div class="input-row">
+                    <input type="number" class="amount-input" id="from-amount" value="1" step="0.01" min="0" placeholder="0">
+                    <select class="currency-select" id="from-currency"></select>
+                </div>
+            </div>
+
+            <div class="swap-section">
+                <button class="swap-btn" id="swap-btn">
+                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">到</label>
+                <div class="input-row">
+                    <div class="amount-input" id="to-amount" style="border: none; cursor: default;">--</div>
+                    <select class="currency-select" id="to-currency"></select>
+                </div>
+            </div>
+
+            <div class="result-section">
+                <div class="result-amount" id="result-amount">--</div>
+                <div class="result-label" id="result-label">等待输入...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">热门汇率</span>
+            </div>
+            <div class="rates-grid" id="rates-grid"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">转换历史</span>
+            </div>
+            <div class="history-list" id="history-list">
+                <div style="color: var(--text-secondary); text-align: center; padding: 15px; font-size: 0.85rem;">暂无历史记录</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>数据每 24 小时更新 · <a href="https://www.exchangerate-api.com" target="_blank">Exchange Rate API</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const CURRENCIES = { USD: { name: '美元', flag: '🇺🇸' }, CNY: { name: '人民币', flag: '🇨🇳' }, EUR: { name: '欧元', flag: '🇪🇺' }, JPY: { name: '日元', flag: '🇯🇵' }, GBP: { name: '英镑', flag: '🇬🇧' }, KRW: { name: '韩元', flag: '🇰🇷' }, HKD: { name: '港币', flag: '🇭🇰' }, TWD: { name: '新台币', flag: '🇹🇼' }, SGD: { name: '新加坡元', flag: '🇸🇬' }, AUD: { name: '澳元', flag: '🇦🇺' }, CAD: { name: '加元', flag: '🇨🇦' }, CHF: { name: '瑞士法郎', flag: '🇨🇭' }, THB: { name: '泰铢', flag: '🇹🇭' }, MYR: { name: '马币', flag: '🇲🇾' }, INR: { name: '卢比', flag: '🇮🇳' }, RUB: { name: '卢布', flag: '🇷🇺' }, VND: { name: '越南盾', flag: '🇻🇳' }, PHP: { name: '比索', flag: '🇵🇭' }, NZD: { name: '纽元', flag: '🇳🇿' }, SEK: { name: '克朗', flag: '🇸🇪' } };
+        const POPULAR_RATES = ['USD', 'EUR', 'JPY', 'GBP', 'KRW', 'HKD'];
+        let rates = {};
+        let history = JSON.parse(localStorage.getItem('conversionHistory') || '[]');
+        const fromAmountEl = document.getElementById('from-amount'), fromCurrencyEl = document.getElementById('from-currency'), toAmountEl = document.getElementById('to-amount'), toCurrencyEl = document.getElementById('to-currency'), resultAmountEl = document.getElementById('result-amount'), resultLabelEl = document.getElementById('result-label'), updateTimeEl = document.getElementById('update-time'), ratesGridEl = document.getElementById('rates-grid'), historyListEl = document.getElementById('history-list'), offlineNotice = document.getElementById('offline-notice'), errorContainer = document.getElementById('error-container');
+
+        function init() { populateCurrencySelects(); setupEventListeners(); loadRates(); renderHistory(); }
+        function populateCurrencySelects() { const optionsHTML = Object.entries(CURRENCIES).map(([code, info]) => `<option value="${code}">${info.flag} ${code}</option>`).join(''); fromCurrencyEl.innerHTML = optionsHTML; toCurrencyEl.innerHTML = optionsHTML; fromCurrencyEl.value = 'USD'; toCurrencyEl.value = 'CNY'; }
+        function setupEventListeners() { fromAmountEl.addEventListener('input', calculate); fromCurrencyEl.addEventListener('change', () => { calculate(); renderPopularRates(); saveToHistory(); }); toCurrencyEl.addEventListener('change', () => { calculate(); saveToHistory(); }); document.getElementById('swap-btn').addEventListener('click', swapCurrencies); window.addEventListener('online', () => { offlineNotice.style.display = 'none'; loadRates(); }); window.addEventListener('offline', () => { offlineNotice.style.display = 'flex'; }); }
+        async function loadRates() { try { updateTimeEl.innerHTML = '<div class="loader"></div>'; const response = await fetch('https://open.er-api.com/v6/latest/USD'); if (!response.ok) throw new Error('网络请求失败'); const data = await response.json(); if (data.result !== 'success') throw new Error(data['error-type'] || 'API返回错误'); rates = data.rates; const lastUpdate = new Date(data.time_last_update_unix * 1000); localStorage.setItem('cachedRates', JSON.stringify({ rates, lastUpdate: lastUpdate.toISOString() })); updateTimeEl.textContent = lastUpdate.toLocaleTimeString('zh-CN'); calculate(); renderPopularRates(); errorContainer.innerHTML = ''; } catch (error) { console.error('加载失败:', error); const cached = localStorage.getItem('cachedRates'); if (cached) { const cachedData = JSON.parse(cached); rates = cachedData.rates; const lastUpdate = new Date(cachedData.lastUpdate); updateTimeEl.textContent = lastUpdate.toLocaleTimeString('zh-CN'); offlineNotice.style.display = 'flex'; calculate(); renderPopularRates(); } else { updateTimeEl.textContent = '离线'; errorContainer.innerHTML = `<div class="notice error"><div>⚠️ 无法加载汇率数据<br><small>${error.message}</small><br><button class="error-btn" onclick="loadRates()">重新加载</button></div></div>`; } } }
+        function calculate() { const fromAmount = parseFloat(fromAmountEl.value) || 0; const fromCurrency = fromCurrencyEl.value; const toCurrency = toCurrencyEl.value; if (Object.keys(rates).length === 0) return; const fromRate = rates[fromCurrency]; const toRate = rates[toCurrency]; if (!fromRate || !toRate) return; const result = (fromAmount / fromRate) * toRate; toAmountEl.textContent = formatNumber(result, toCurrency); resultAmountEl.textContent = formatNumber(result, toCurrency); resultLabelEl.textContent = `${fromAmount} ${fromCurrency} = ${formatNumber(result, toCurrency)} ${toCurrency}`; }
+        function formatNumber(num, currency) { let decimals = 2; if (['JPY', 'KRW', 'VND'].includes(currency)) { decimals = 0; } else if (num > 1000) { decimals = 2; } else if (num < 0.01) { decimals = 6; } return num.toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }); }
+        function swapCurrencies() { const temp = fromCurrencyEl.value; fromCurrencyEl.value = toCurrencyEl.value; toCurrencyEl.value = temp; calculate(); renderPopularRates(); saveToHistory(); }
+        function renderPopularRates() { const baseCurrency = fromCurrencyEl.value; const html = POPULAR_RATES.map(code => { const info = CURRENCIES[code]; const rate = rates[baseCurrency] / rates[code]; return `<div class="rate-item" data-currency="${code}"><div class="rate-flag">${info.flag}</div><div class="rate-code">${code}</div><div class="rate-value">${rate.toFixed(4)}</div></div>`; }).join(''); ratesGridEl.innerHTML = html; document.querySelectorAll('.rate-item').forEach(item => { item.addEventListener('click', () => { toCurrencyEl.value = item.dataset.currency; calculate(); }); }); }
+        function saveToHistory() { const fromAmount = parseFloat(fromAmountEl.value) || 0; const fromCurrency = fromCurrencyEl.value; const toCurrency = toCurrencyEl.value; if (!rates[fromCurrency] || !rates[toCurrency]) return; const rate = rates[fromCurrency] / rates[toCurrency]; const toAmount = fromAmount * rate; const record = { id: Date.now(), from: { amount: fromAmount, currency: fromCurrency }, to: { amount: toAmount, currency: toCurrency }, rate: rate, date: new Date().toISOString() }; history.unshift(record); if (history.length > 10) history.pop(); localStorage.setItem('conversionHistory', JSON.stringify(history)); renderHistory(); }
+        function renderHistory() { if (history.length === 0) { historyListEl.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 15px;">暂无历史记录</div>'; return; } const html = history.map(record => { const fromInfo = CURRENCIES[record.from.currency]; const toInfo = CURRENCIES[record.to.currency]; const date = new Date(record.date); return `<div class="history-item"><div style="flex:1"><div class="history-time">${date.toLocaleString('zh-CN')}</div><div class="history-data">${fromInfo.flag} ${record.from.amount} ${record.from.currency} → ${toInfo.flag} ${record.to.amount.toFixed(2)} ${record.to.currency}</div></div><button class="history-delete" onclick="deleteHistory(${record.id})">删除</button></div>`; }).join(''); historyListEl.innerHTML = html; }
+        function deleteHistory(id) { history = history.filter(h => h.id !== id); localStorage.setItem('conversionHistory', JSON.stringify(history)); renderHistory(); }
+        setInterval(() => { if (navigator.onLine) loadRates(); }, 5 * 60 * 1000);
+        init();
+    </script>
+</body>
+</html>
